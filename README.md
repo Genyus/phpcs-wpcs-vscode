@@ -1,6 +1,6 @@
 # PHP CodeSniffer and WordPress Coding Standards with VS Code
 
-_Last Updated 2016-11-17 by @tommcfarlin_
+_Last Updated 2020-05-14 by @Genyus_
 
 This guide is meant to provide all of the steps necessary to easily get up and running with PHP CodeSniffer, the WordPress Coding Standard ruleset, and Visual Studio Code.
 
@@ -84,49 +84,57 @@ For the purposes of this document, we're installing PHP CodeSniffer on a project
 From the integrated terminal within Visual Studio Code, enter the following command:
 
 ```
-$ composer require "squizlabs/php_codesniffer=2.*"
+$ composer require --dev squizlabs/php_codesniffer
 ```
 
 This will create `composer.json`, tell it where to locate the PHP CodeSniffer, and install it in a `vendor` directory. Once this is done, we need the WordPress Coding Standard ruleset.
 
-## 4. Installing the WordPress Coding Standards Rules
+## 4. Installing the PHP_CodeSniffer Standards Composer Installer Plugin
 
-I recommend placing the rules in a directory you can refer to often. Personally, I use a `projects` directory in my Dropbox directory to manage all of my work because it obviously provides backups automatically (and no, I don't recommend storing secure files there).
+Once upon a time, developers had to install the rulesets of their choice and then tell PHP CodeSniffer where to find them, but no more! There's a handy composer installer plugin that now does all the hard work for you and loads any rules found within your project automagically.
 
-From within your directory of choice, say `dropbox/projects`, enter the following command in the terminal:
-
-```
-$ composer create-project wp-coding-standards/wpcs:dev-master --no-dev
-```
-
-This will create a `wpcs` directory in your `projects` directory and it makes it easy to tell each project where the WordPress Coding Standards are stored because, remember, we'll be using Composer on a project-by-project basis.
-
-## 5. Tell PHPCS About WPCS
-
-From within Visual Studio's integrated terminal, make sure that you're in your project's directory and then issue the following command:
+From the integrated terminal, enter the following command:
 
 ```
-$ ./vendor/bin/phpcs --config-set installed_paths /path/to/dropbox/projects/wpcs
+$ composer require --dev dealerdirect/phpcodesniffer-composer-installer
 ```
 
 And this will tell your project's copy of PHPCS where the WordPress Coding Standards are.
 
-## 6. Update User Settings
+## 5. Installing the WordPress Coding Standards Rules
 
-Finally, we need to let Visual Studio what we're going to be using to sniff out the code in our project and what rules to use. This is really easy to do. In Visual Studio, hit the `⌘,` (or whatever your operating system uses) command to open `settings.json`.
+The WPCS rules are what will allow VS Code to lint and fix your code according to the Coding Standards.
+
+From the integrated terminal, enter the following command:
+
+```
+$ composer require --dev wp-coding-standards/wpcs
+```
+
+## 6. Installing the PHP Sniffer VS Code Extension
+
+PHP Sniffer is a VS Code plugin that allows the editor to both lint PHP code and resolve any fixable coding standard violations using the built-in commands "Format Document" and "Format Selection".
+
+In VS Code, select "View > Extensions" to bring up the extensions panel, then enter "PHP Sniffer" in the search box and install the extension.
+
+Now, we need to let Visual Studio what we're going to be using to sniff out the code in our project and which rules to use. This is really easy to do. In Visual Studio, hit the `⌘,` (or whatever your operating system uses) command to open the application settings. Search for "PHP Sniffer" at either the user, workspace or folder level (for the project-based approach we're taking here, choose the root folder). Enable "PHP Sniffer: Auto Detect" and enter "WordPress" for "PHP Sniffer: Standard"
+
+Finally, if you have multiple PHP language extensions enabled, you should edit the appropriate `settings.json` to ensure the correct one is selected by default:
 
 Make sure the file looks like the following (though you may need to tweak based on your existing settings)
 
 ```json
 // Place your settings in this file to overwrite the default settings
 {
-    // PHPCS
-    "phpcs.enable":   true,
-    "phpcs.standard": "WordPress",
+  "[php]": {
+    "editor.defaultFormatter": "wongjn.php-sniffer"
+  },
+  "phpSniffer.autoDetect": true,
+  "phpSniffer.standard": "WordPress"
 }
 ```
 
-And this will enable PHPCS and will also tell it to use the standard WordPress ruleset. If this doesn't start working on the code your have automatically, then restart Visual Studio Code.
+PHP Sniffer should now be activated and following the standard WordPress ruleset. If this doesn't start working on the code you have automatically, then restart VS Code.
 ___
 
 ## Resources
@@ -136,4 +144,7 @@ ___
 - [The Latest Composer Snapshot](https://getcomposer.org/composer.phar)
 - [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
 - [WordPress Coding Standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards)
-- [My corresponding blog post](https://tommcfarlin.com/php-codesniffer-in-visual-studio-code)
+- [Tom McFarlin's original guide (which this is forked from)](https://github.com/tommcfarlin/phpcs-wpcs-vscode)
+- [Tom's corresponding blog post](https://tommcfarlin.com/php-codesniffer-in-visual-studio-code)
+- [PHP CodeSniffer Composer Installer Plugin](https://github.com/DealerDirect/phpcodesniffer-composer-installer)
+- [PHP Sniffer VS Code Extension](https://github.com/wongjn/vscode-php-sniffer)
